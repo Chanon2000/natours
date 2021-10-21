@@ -19,6 +19,10 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+// #. Testing for Secure HTTPS Connections
+// ทำให้ app trust proxy's เพื่อให้ req.secure ทำงานเป็นต้น
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 

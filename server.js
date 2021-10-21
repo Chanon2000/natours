@@ -35,3 +35,14 @@ process.on('unhandledRejection', err => {
     process.exit(1);
   });
 });
+
+// #. Responding to a SIGTERM Signal
+// SIGTERM เป็น event ที่จะทำให้ program shut down
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    // server.close จะทำให้มันจะทำ pending requests ให้หมดก่อน
+    console.log('💥 Process terminated!');
+    // ไม่ต้อง process.exit(1); เพราะ SIGTERM จะทำให้ application shout down อยู่แล้ว
+  });
+});
