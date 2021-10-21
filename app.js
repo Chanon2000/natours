@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -27,6 +28,29 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARES
+
+// #. Implementing CORS
+// 1. cors สำหรับ simple requests
+// Implement CORS
+app.use(cors()); // enable cross-origin resource sharing for all incoming requests
+// app.use('/api/v1/tours', cors(), tourRouter); // คือ cors() แค่เร้านี้เท่านั้น
+// cors() จะทำการset Access-COntrol-Allow-Origin * ที่headerของทุก request
+// เหตุผลที่เปิดเพราะว่าเช่น front-end อยู่คนละ domain กับ api เป็นต้น
+
+// เราอาจกำหนด doain ที่อณุญาติได้เลยเช่น
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+// ทำแบบนี้จะใช้งานได้กับแค่ simple requests (GET, POST)
+
+// 2. cors สำหรับ non-simple requests
+// non-simple requests เช่น PUT, PATCH, DELETE request หรือ request ที่ส่ง cookies หรือใช้ nonstandard headers
+// request จะต้องการ preflight phase
+// options() คือ HTTP method เพื่อส่ง response
+// '*' หมายถึงทุกเร้า
+app.options('*', cors());
+// app.options('api/v1/tours/:id', cors()); // หมายถึงแค่ non-simple requestsนี้เท่านั้นจะเข้าใช้งานได้
+
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
