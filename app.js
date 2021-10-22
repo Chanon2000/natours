@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
 
@@ -72,11 +73,12 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // ต้องการ body ในแบบ raw form (string) ไม่ใช่แบบ json เลยเอา route มาไว้ตรงนี้
-// app.post(
-//   '/webhook-checkout',
-//   express.raw({ type: 'application/json' }), // raw body
-//   bookingController.webhookCheckout
-// );
+app.post(
+  '/webhook-checkout',
+  // express.raw({ type: 'application/json' }) // ไใช่ไม่ได้เพราะอะไรก็ไม่รู้
+  bodyParser.raw({ type: 'application/json' }), // raw body
+  bookingController.webhookCheckout
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' })); // req hit middleware นี้ body จะกลายเป็น json
